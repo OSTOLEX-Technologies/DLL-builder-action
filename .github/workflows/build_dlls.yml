@@ -2,8 +2,7 @@ name: Build and Publish DLLs
 
 on:
   repository_dispatch:
-    types:
-      - submodule-event-type
+    types: [build-dlls]
 
 jobs:
   build_and_publish:
@@ -37,7 +36,7 @@ jobs:
 
       - name: Restore NuGet packages
         run: |
-            dotnet nuget add source --username HolidayMan --password ${{ github.event.client_payload.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.event.client_payload.repo_owner }}/index.json"
+            dotnet nuget add source --username HolidayMan --password ${{ secrets.GH_PAT_PACK }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.event.client_payload.repo_owner }}/index.json"
             dotnet restore .\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}.csproj
 
       - name: Build DLLs
@@ -47,4 +46,4 @@ jobs:
         run: dotnet pack .\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}.csproj -c Release /p:PackageVersion=${{ env.VERSION }}
 
       - name: Publish DLLs to GitHub Packages
-        run: dotnet nuget push D:\a\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\bin\Release\${{ env.REPO_NAME }}.${{ env.VERSION }}.nupkg --source "https://nuget.pkg.github.com/${{ github.event.client_payload.repo_owner }}/index.json" --api-key ${{ github.event.client_payload.token }}
+        run: dotnet nuget push D:\a\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\bin\Release\${{ env.REPO_NAME }}.${{ env.VERSION }}.nupkg --source "https://nuget.pkg.github.com/${{ github.event.client_payload.repo_owner }}/index.json" --api-key ${{ secrets.GH_PAT_PACK }}
