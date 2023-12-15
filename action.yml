@@ -8,7 +8,6 @@ inputs:
 
 runs:
   using: 'composite'
-  shell: pwsh
   steps:
     - name: Validate Secret Input
       run: |
@@ -17,6 +16,7 @@ runs:
           Write-Error "Error: Secret input 'token' is required but not provided."
           exit 1
         }
+      shell: pwsh
 
     - name: Extract version from tag
       run: |
@@ -27,12 +27,14 @@ runs:
         }
         $version=$TAG.Substring(1)
         echo "VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      shell: pwsh
 
     - name: Extract repository
       run: |
         $repositoryFullName = "${{ github.repository }}"
         $repositoryName = ($repositoryFullName -split '/')[1]
         echo "REPO_NAME=$repositoryName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      shell: pwsh
 
     - name: Checkout main repository
       uses: actions/checkout@v4
@@ -49,12 +51,16 @@ runs:
       run: |
         dotnet nuget add source --username ${{ github.actor }} --password ${{ inputs.my_secret_input }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
         dotnet restore .\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}.csproj
+      shell: pwsh
   
     - name: Build DLLs
       run: dotnet build -c Release
+      shell: pwsh
 
     - name: Pack NuGet package
       run: dotnet pack .\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}.csproj -c Release /p:PackageVersion=${{ env.VERSION }}
+      shell: pwsh
 
     - name: Publish DLLs to GitHub Packages
       run: dotnet nuget push D:\a\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\bin\Release\${{ env.REPO_NAME }}.${{ env.VERSION }}.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ inputs.my_secret_input }}
+      shell: pwsh
