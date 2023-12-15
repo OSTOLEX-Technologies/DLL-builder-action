@@ -11,10 +11,10 @@ runs:
   steps:
     - name: Validate Secret Input
       run: |
-        if [ -z "${{ inputs.my_secret_input }}" ]; then
-          echo "Error: Secret input 'my_secret_input' is required but not provided."
+        if (-not ${{ inputs.my_secret_input }}) {
+          Write-Error "Error: Secret input 'my_secret_input' is required but not provided."
           exit 1
-        fi
+        }
 
     - name: Extract version from tag
       run: |
