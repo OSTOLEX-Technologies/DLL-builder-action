@@ -49,7 +49,7 @@ runs:
 
     - name: Restore NuGet packages
       run: |
-        dotnet nuget add source --username ${{ github.actor }} --password ${{ inputs.my_secret_input }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+        dotnet nuget add source --username ${{ github.actor }} --password ${{ inputs.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
         dotnet restore .\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}.csproj
       shell: pwsh
   
@@ -62,5 +62,5 @@ runs:
       shell: pwsh
 
     - name: Publish DLLs to GitHub Packages
-      run: dotnet nuget push D:\a\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\bin\Release\${{ env.REPO_NAME }}.${{ env.VERSION }}.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ inputs.my_secret_input }}
+      run: dotnet nuget push D:\a\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\${{ env.REPO_NAME }}\bin\Release\${{ env.REPO_NAME }}.${{ env.VERSION }}.nupkg --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --api-key ${{ inputs.token }}
       shell: pwsh
