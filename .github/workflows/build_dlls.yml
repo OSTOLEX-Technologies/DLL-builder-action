@@ -25,7 +25,7 @@ jobs:
           }
           $version=$TAG.Substring(1)
           echo "VERSION=$version" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-          $repositoryFullName = ${{ github.event.client_payload.repository }}
+          $repositoryFullName = "${{ github.event.client_payload.repository }}"
           $repositoryName = ($repositoryFullName -split '/')[1]
           echo "REPO_NAME=$repositoryName" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
